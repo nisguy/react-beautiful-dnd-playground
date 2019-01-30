@@ -10,8 +10,18 @@ export const initialState = {
       id: "column-1",
       title: "To do",
       tasks: ["task-1", "task-2", "task-3", "task-4"]
+    },
+    "column-2": {
+      id: "column-2",
+      title: "In progress",
+      tasks: []
+    },
+    "column-3": {
+      id: "column-3",
+      title: "Done",
+      tasks: []
     }
   },
   //Facilitate the ordering of columns
-  columnOrder: ["column-1"]
+  columnOrder: ["column-1", "column-2", "column-3"]
 };

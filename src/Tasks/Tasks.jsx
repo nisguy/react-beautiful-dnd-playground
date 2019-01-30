@@ -11,10 +11,8 @@ class Tasks extends Component {
             <div
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              // isDragging={snapshot.isDragging}
               ref={provided.innerRef}
               style={{
-                maxWidth: 400,
                 ...provided.draggableProps.style
               }}
               className={classNames({
@@ -29,7 +27,11 @@ class Tasks extends Component {
         </Draggable>
       );
     });
-    return <div ref={this.props.innerRef}>{taskList}</div>;
+    return (
+      <div style={{ maxWidth: 300, flexGrow: 1 }} ref={this.props.innerRef}>
+        {taskList}
+      </div>
+    );
   }
 }
 
