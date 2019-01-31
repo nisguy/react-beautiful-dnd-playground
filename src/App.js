@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 // import "./App.css";
 import { initialState } from "./initialState";
@@ -25,8 +25,9 @@ class App extends Component {
 
   onDragEnd = result => {
     // document.body.style.color = "inherit";
+    // col
 
-    const { destination, source, draggableId } = result;
+    const { destination, source, draggableId, type } = result;
     if (!destination) {
       return;
     }
@@ -34,6 +35,19 @@ class App extends Component {
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
+      return;
+    }
+
+    if (type === "column") {
+      const newColumnOrder = Array.from(this.state.columnOrder);
+      newColumnOrder.splice(source.index, 1);
+      newColumnOrder.splice(destination.index, 0, draggableId);
+
+      const newState = {
+        ...this.state,
+        columnOrder: newColumnOrder
+      };
+      this.setState(newState);
       return;
     }
 
@@ -92,23 +106,33 @@ class App extends Component {
         onDragStart={this.onDragStart}
         onDragUpdate={this.onDragUpdate}
       >
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          {this.state.columnOrder.map((columnId, index) => {
-            const isDropDisabled = index < this.state.homeIndex;
-            const column = this.state.columns[columnId];
-            const tasks = column.tasks.map(task => {
-              return this.state.tasks[task];
-            });
-            return (
-              <Column
-                column={column}
-                isDropDisabled={isDropDisabled}
-                tasks={tasks}
-                key={columnId}
-              />
-            );
-          })}
-        </div>
+        <Droppable direction="horizontal" droppableId="columns" type="column">
+          {provided => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              {this.state.columnOrder.map((columnId, index) => {
+                const isDropDisabled = index < this.state.homeIndex;
+                const column = this.state.columns[columnId];
+                const tasks = column.tasks.map(task => {
+                  return this.state.tasks[task];
+                });
+                return (
+                  <Column
+                    column={column}
+                    index={index}
+                    isDropDisabled={isDropDisabled}
+                    tasks={tasks}
+                    key={columnId}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     );
   }
